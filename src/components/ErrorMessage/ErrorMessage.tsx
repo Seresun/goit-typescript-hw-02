@@ -1,12 +1,11 @@
-import React from "react";
-import css from "./ErrorMessage.module.css";
+import styles from './ErrorMessage.module.css';
 
-const ErrorMessage = () => {
-  return (
-    <div>
-      <p className={css.error}>Woops...there is no images for such query</p>
-    </div>
-  );
+interface ErrorMessageProps {
+  message: string;
+}
+
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
+  return <p className={styles.error}>{message}</p>;
 };
 
 export default ErrorMessage;

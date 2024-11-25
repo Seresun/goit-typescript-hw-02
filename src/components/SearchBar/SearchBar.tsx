@@ -1,56 +1,41 @@
-import React from "react";
-import css from "./SearchBar.module.css";
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import styles from './SearchBar.module.css';
 
-import toast, { Toaster } from "react-hot-toast";
-import { SearchBarProps } from "./SearchBar.types";
+interface SearchBarProps {
+  onSubmit: (query: string) => void;
+}
 
-const notify = () => toast("The input field is empty ");
+const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
+  const [query, setQuery] = useState<string>('');
 
-const SearchBar = ({ onHandleSubmit }: SearchBarProps) => {
-  const onFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const userInput = form.elements.namedItem("text") as HTMLInputElement;
-    const trimmedValue = userInput.value.trim();
-    if (trimmedValue === "") {
-      notify();
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setQuery(e.target.value);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (query.trim() === '') {
+      toast.error('Please enter a search term!');
       return;
     }
-    onHandleSubmit(trimmedValue);
-
-    form.reset();
+    onSubmit(query);
+    setQuery('');
   };
 
   return (
-    <>
-      <header>
-        <form onSubmit={onFormSubmit} className={css.form}>
-          <input
-            type="text"
-            name="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            className={css.searchField}
-          />
-          <button type="submit" className={css.submitBtn}>
-            Search
-          </button>
-          <Toaster
-            position="top-center"
-            reverseOrder={false}
-            gutter={8}
-            toastOptions={{
-              duration: 1000,
-              style: {
-                background: "#363636",
-                color: "#fff",
-              },
-            }}
-          />
-        </form>
-      </header>
-    </>
+    <header className={styles.searchBar}>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={query}
+          onChange={handleInputChange}
+          placeholder="Search images and photos"
+          autoFocus
+          autoComplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+    </header>
   );
 };
 

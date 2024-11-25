@@ -1,45 +1,36 @@
-import React from "react";
-import css from "../ImageModal/ImageModal.module.css";
-import { IoMdClose } from "react-icons/io";
-import Modal from "react-modal";
-import { ImageModalProps } from "./ImageModal.types";
+import Modal from 'react-modal';
 
-Modal.setAppElement("#root");
+interface Image {
+  urls: { regular: string };
+  alt_description: string;
+}
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    transform: "translate(-50%, -50%)",
-    background: "none",
-    padding: "0",
-    borderStyle: "none",
-  },
-};
+interface ImageModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  image: Image;
+}
 
-const ImageModal = ({
-  modalData: { regular, alt_description },
-  onImageClose,
+const ImageModal: React.FC<ImageModalProps> = ({
   isOpen,
-}: ImageModalProps) => {
-  const onModalCloseHandle = () => {
-    onImageClose();
-  };
-
+  onRequestClose,
+  image,
+}) => {
   return (
     <Modal
-      style={customStyles}
       isOpen={isOpen}
-      onRequestClose={onImageClose}
-      contentLabel="Image modal"
+      onRequestClose={onRequestClose}
+      contentLabel="Image Modal"
+      className="modal"
     >
-      <img src={regular} alt={alt_description} className={css.img} />
-      <p className={css.altDescription}>{alt_description}</p>
-      <button className={css.modalCloseBtn} onClick={onModalCloseHandle}>
-        <IoMdClose color="white" />
+      <button onClick={onRequestClose} className="close-btn">
+        Close
       </button>
+      <img
+        src={image.urls.regular}
+        alt={image.alt_description || 'Image'}
+        className="modal-image"
+      />
     </Modal>
   );
 };
