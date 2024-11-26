@@ -11,7 +11,13 @@ import ImageModal from "./components/ImageModal/ImageModal";
 interface Image {
   id: string;
   urls: { small: string; regular: string };
-  alt_description: string;
+  alt_description: string | null;
+}
+
+interface ApiResponse {
+  results: Image[];
+  total: number;
+  total_pages: number;
 }
 
 const App: React.FC = () => {
@@ -29,7 +35,7 @@ const App: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.get(
+      const response = await axios.get<ApiResponse>( 
         "https://api.unsplash.com/search/photos",
         {
           params: {
@@ -41,10 +47,11 @@ const App: React.FC = () => {
         }
       );
 
-      if (response.data.results.length === 0) {
+      const images = response.data.results; 
+      if (images.length === 0) {
         toast.error("No images found. Please try a different search term.");
       } else {
-        setImages((prevImages) => [...prevImages, ...response.data.results]);
+        setImages((prevImages) => [...prevImages, ...images]);
       }
     } catch (err) {
       setError((err as Error).message);
